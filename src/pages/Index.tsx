@@ -5,11 +5,15 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { PetInfo } from "@/types/pet";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleOnboardingComplete = async (info: PetInfo) => {
     try {
@@ -62,9 +66,34 @@ const Index = () => {
     console.log("Image captured:", image);
   };
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to sign out. Please try again.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out.",
+      });
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-200 py-8 px-4">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto relative">
+        <Button
+          variant="outline"
+          className="absolute right-0 top-0"
+          onClick={handleLogout}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Sign out
+        </Button>
         {!isOnboarded ? (
           <OnboardingForm onComplete={handleOnboardingComplete} />
         ) : (
