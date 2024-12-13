@@ -26,6 +26,8 @@ const Login = () => {
         navigate("/");
       } else if (event === "SIGNED_OUT") {
         navigate("/login");
+      } else if (event === "USER_UPDATED") {
+        console.log("User updated:", session?.user);
       }
     });
 
@@ -61,13 +63,6 @@ const Login = () => {
           }}
           theme="default"
           providers={[]}
-          onError={(error) => {
-            toast({
-              title: "Authentication Error",
-              description: error.message,
-              variant: "destructive",
-            });
-          }}
         />
       </div>
     </div>
