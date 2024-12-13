@@ -24,13 +24,33 @@ const Login = () => {
   }, [navigate, toast]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary-100 to-primary-200 p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">Welcome to PetNutriScan</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary-600 to-primary-800 p-4">
+      <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-primary-200/20">
+        <h1 className="text-3xl font-bold text-center mb-8 text-primary-800">Welcome to PetNutriScan</h1>
         <Auth
           supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
-          theme="light"
+          appearance={{
+            theme: ThemeSupa,
+            variables: {
+              default: {
+                colors: {
+                  brand: '#7C3AED',
+                  brandAccent: '#6D28D9',
+                  inputBackground: 'white',
+                  inputText: '#1F2937',
+                  inputBorder: '#E5E7EB',
+                  inputBorderHover: '#7C3AED',
+                  inputBorderFocus: '#6D28D9',
+                }
+              }
+            },
+            className: {
+              container: 'auth-container',
+              button: 'auth-button',
+              input: 'auth-input',
+            }
+          }}
+          theme="default"
           providers={[]}
         />
       </div>
