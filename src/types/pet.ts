@@ -1,6 +1,7 @@
 export type PetType = 'dog' | 'cat';
 
 export interface PetInfo {
+  id: string;
   name: string;
   petType: PetType;
   breedId: number | null;

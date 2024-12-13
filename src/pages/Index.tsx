@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { OnboardingForm } from "@/components/OnboardingForm";
 import { Scanner } from "@/components/Scanner";
 import { motion } from "framer-motion";
@@ -10,8 +10,10 @@ import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
+import { PetSelector } from "@/components/PetSelector";
 
 const Index = () => {
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
@@ -26,10 +28,10 @@ const Index = () => {
     },
   });
 
-  const { data: petInfo, isLoading: isPetLoading } = useQuery({
-    queryKey: ['pet', user?.id],
+  const { data: pets = [], isLoading: isPetsLoading } = useQuery({
+    queryKey: ['pets', user?.id],
     queryFn: async () => {
-      if (!user) return null;
+      if (!user) return [];
       
       const { data, error } = await supabase
         .from('pets')
@@ -39,28 +41,28 @@ const Index = () => {
             name
           )
         `)
-        .eq('user_id', user.id)
-        .single();
+        .eq('user_id', user.id);
       
       if (error) throw error;
       
-      if (!data) return null;
-      
-      return {
-        name: data.name,
-        petType: data.pet_type,
-        breedId: data.breed_id,
-        gender: data.gender,
-        age: data.age,
-        weight: data.weight,
-        allergies: data.allergies || [],
-        healthIssues: data.health_issues || [],
-      } as PetInfo;
+      return data.map(pet => ({
+        id: pet.id,
+        name: pet.name,
+        petType: pet.pet_type,
+        breedId: pet.breed_id,
+        gender: pet.gender,
+        age: pet.age,
+        weight: pet.weight,
+        allergies: pet.allergies || [],
+        healthIssues: pet.health_issues || [],
+      })) as PetInfo[];
     },
     enabled: !!user,
   });
 
-  const handleOnboardingComplete = async (info: PetInfo) => {
+  const selectedPet = pets.find(pet => pet.id === selectedPetId);
+
+  const handleOnboardingComplete = async (info: Omit<PetInfo, 'id'>) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
@@ -104,10 +106,10 @@ const Index = () => {
   };
 
   const handleImageCapture = async (image: File) => {
-    if (!petInfo) {
+    if (!selectedPet) {
       toast({
         title: "Error",
-        description: "Pet information is required before analyzing food",
+        description: "Please select a pet before analyzing food",
         variant: "destructive",
       });
       return;
@@ -130,7 +132,7 @@ const Index = () => {
           },
           body: JSON.stringify({
             image: base64Image,
-            petInfo,
+            petInfo: selectedPet,
           }),
         });
 
@@ -175,7 +177,7 @@ const Index = () => {
     }
   };
 
-  if (isPetLoading) {
+  if (isPetsLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-200 py-8 px-4 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -194,7 +196,7 @@ const Index = () => {
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
         </Button>
-        {!petInfo ? (
+        {pets.length === 0 ? (
           <OnboardingForm onComplete={handleOnboardingComplete} />
         ) : (
           <motion.div
@@ -202,16 +204,22 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <div className="bg-white p-6 rounded-xl shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Welcome, {petInfo.name}'s Parent!
+            <div className="bg-white p-6 rounded-xl shadow-lg space-y-4">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Welcome!
               </h2>
-              <p className="text-gray-600">
-                Scan pet food labels to check if they're suitable for{" "}
-                {petInfo.name}.
-              </p>
+              <PetSelector
+                pets={pets}
+                selectedPetId={selectedPetId}
+                onPetSelect={setSelectedPetId}
+              />
+              {selectedPet && (
+                <p className="text-gray-600">
+                  Scan pet food labels to check if they're suitable for {selectedPet.name}.
+                </p>
+              )}
             </div>
-            <Scanner onImageCapture={handleImageCapture} />
+            {selectedPet && <Scanner onImageCapture={handleImageCapture} />}
             {isAnalyzing && (
               <Card>
                 <CardContent className="pt-6">
