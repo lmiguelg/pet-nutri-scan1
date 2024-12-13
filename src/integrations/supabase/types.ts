@@ -9,7 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      breeds: {
+        Row: {
+          id: number
+          name: string
+          pet_type: Database["public"]["Enums"]["pet_type"]
+        }
+        Insert: {
+          id?: number
+          name: string
+          pet_type: Database["public"]["Enums"]["pet_type"]
+        }
+        Update: {
+          id?: number
+          name?: string
+          pet_type?: Database["public"]["Enums"]["pet_type"]
+        }
+        Relationships: []
+      }
+      pets: {
+        Row: {
+          age: number
+          allergies: string[] | null
+          breed_id: number | null
+          created_at: string
+          gender: string
+          health_issues: string[] | null
+          id: string
+          name: string
+          pet_type: Database["public"]["Enums"]["pet_type"]
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          age: number
+          allergies?: string[] | null
+          breed_id?: number | null
+          created_at?: string
+          gender: string
+          health_issues?: string[] | null
+          id?: string
+          name: string
+          pet_type: Database["public"]["Enums"]["pet_type"]
+          user_id: string
+          weight: number
+        }
+        Update: {
+          age?: number
+          allergies?: string[] | null
+          breed_id?: number | null
+          created_at?: string
+          gender?: string
+          health_issues?: string[] | null
+          id?: string
+          name?: string
+          pet_type?: Database["public"]["Enums"]["pet_type"]
+          user_id?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pets_breed_id_fkey"
+            columns: ["breed_id"]
+            isOneToOne: false
+            referencedRelation: "breeds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +85,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      pet_type: "dog" | "cat"
     }
     CompositeTypes: {
       [_ in never]: never

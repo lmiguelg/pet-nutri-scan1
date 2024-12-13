@@ -2,23 +2,59 @@ import { useState } from "react";
 import { OnboardingForm } from "@/components/OnboardingForm";
 import { Scanner } from "@/components/Scanner";
 import { motion } from "framer-motion";
-
-interface PetInfo {
-  name: string;
-  gender: string;
-  age: number;
-  weight: number;
-  allergies: string[];
-  healthIssues: string[];
-}
+import { supabase } from "@/integrations/supabase/client";
+import type { PetInfo } from "@/types/pet";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
   const [isOnboarded, setIsOnboarded] = useState(false);
+  const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
+  const { toast } = useToast();
 
-  const handleOnboardingComplete = (info: PetInfo) => {
-    setPetInfo(info);
-    setIsOnboarded(true);
+  const handleOnboardingComplete = async (info: PetInfo) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to save pet information",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { error } = await supabase
+        .from('pets')
+        .insert({
+          user_id: user.id,
+          name: info.name,
+          pet_type: info.petType,
+          breed_id: info.breedId,
+          gender: info.gender,
+          age: info.age,
+          weight: info.weight,
+          allergies: info.allergies,
+          health_issues: info.healthIssues,
+        });
+
+      if (error) throw error;
+
+      setPetInfo(info);
+      setIsOnboarded(true);
+      
+      toast({
+        title: "Success",
+        description: "Pet information saved successfully!",
+      });
+    } catch (error) {
+      console.error('Error saving pet information:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save pet information. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const handleImageCapture = (image: File) => {
