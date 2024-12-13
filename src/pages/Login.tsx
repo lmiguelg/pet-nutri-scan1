@@ -10,6 +10,13 @@ const Login = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Check if user is already logged in
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate("/");
+      }
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN") {
         toast({
@@ -17,6 +24,8 @@ const Login = () => {
           description: "You have successfully signed in.",
         });
         navigate("/");
+      } else if (event === "SIGNED_OUT") {
+        navigate("/login");
       }
     });
 
@@ -52,6 +61,13 @@ const Login = () => {
           }}
           theme="default"
           providers={[]}
+          onError={(error) => {
+            toast({
+              title: "Authentication Error",
+              description: error.message,
+              variant: "destructive",
+            });
+          }}
         />
       </div>
     </div>
