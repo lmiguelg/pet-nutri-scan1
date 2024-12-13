@@ -8,10 +8,13 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Index = () => {
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
+  const [analysis, setAnalysis] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -61,9 +64,60 @@ const Index = () => {
     }
   };
 
-  const handleImageCapture = (image: File) => {
-    // TODO: Implement image analysis with OpenAI
-    console.log("Image captured:", image);
+  const handleImageCapture = async (image: File) => {
+    if (!petInfo) {
+      toast({
+        title: "Error",
+        description: "Pet information is required before analyzing food",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsAnalyzing(true);
+      setAnalysis(null);
+
+      // Convert the image to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      
+      reader.onload = async () => {
+        const base64Image = reader.result as string;
+        
+        const response = await fetch('https://ktxnppezwuiulgmbmeip.functions.supabase.co/analyze-nutrition', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            image: base64Image,
+            petInfo,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to analyze image');
+        }
+
+        const data = await response.json();
+        setAnalysis(data.choices[0].message.content);
+        
+        toast({
+          title: "Analysis Complete",
+          description: "The nutritional information has been analyzed!",
+        });
+      };
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to analyze the image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -112,6 +166,28 @@ const Index = () => {
               </p>
             </div>
             <Scanner onImageCapture={handleImageCapture} />
+            {isAnalyzing && (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="ml-3">Analyzing nutritional information...</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {analysis && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Nutritional Analysis</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="whitespace-pre-wrap text-left">
+                    {analysis}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </motion.div>
         )}
       </div>
