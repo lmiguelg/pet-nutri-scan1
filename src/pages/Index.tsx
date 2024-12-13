@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { OnboardingForm } from "@/components/OnboardingForm";
 import { Scanner } from "@/components/Scanner";
 import { motion } from "framer-motion";
@@ -9,14 +9,56 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
 
 const Index = () => {
-  const [isOnboarded, setIsOnboarded] = useState(false);
-  const [petInfo, setPetInfo] = useState<PetInfo | null>(null);
   const [analysis, setAnalysis] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) throw error;
+      return user;
+    },
+  });
+
+  const { data: petInfo, isLoading: isPetLoading } = useQuery({
+    queryKey: ['pet', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      
+      const { data, error } = await supabase
+        .from('pets')
+        .select(`
+          *,
+          breeds (
+            name
+          )
+        `)
+        .eq('user_id', user.id)
+        .single();
+      
+      if (error) throw error;
+      
+      if (!data) return null;
+      
+      return {
+        name: data.name,
+        petType: data.pet_type,
+        breedId: data.breed_id,
+        gender: data.gender,
+        age: data.age,
+        weight: data.weight,
+        allergies: data.allergies || [],
+        healthIssues: data.health_issues || [],
+      } as PetInfo;
+    },
+    enabled: !!user,
+  });
 
   const handleOnboardingComplete = async (info: PetInfo) => {
     try {
@@ -46,9 +88,6 @@ const Index = () => {
         });
 
       if (error) throw error;
-
-      setPetInfo(info);
-      setIsOnboarded(true);
       
       toast({
         title: "Success",
@@ -78,7 +117,6 @@ const Index = () => {
       setIsAnalyzing(true);
       setAnalysis(null);
 
-      // Convert the image to base64
       const reader = new FileReader();
       reader.readAsDataURL(image);
       
@@ -137,6 +175,14 @@ const Index = () => {
     }
   };
 
+  if (isPetLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-200 py-8 px-4 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-200 py-8 px-4">
       <div className="max-w-md mx-auto relative">
@@ -148,7 +194,7 @@ const Index = () => {
           <LogOut className="mr-2 h-4 w-4" />
           Sign out
         </Button>
-        {!isOnboarded ? (
+        {!petInfo ? (
           <OnboardingForm onComplete={handleOnboardingComplete} />
         ) : (
           <motion.div
@@ -158,11 +204,11 @@ const Index = () => {
           >
             <div className="bg-white p-6 rounded-xl shadow-lg">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Welcome, {petInfo?.name}'s Parent!
+                Welcome, {petInfo.name}'s Parent!
               </h2>
               <p className="text-gray-600">
                 Scan pet food labels to check if they're suitable for{" "}
-                {petInfo?.name}.
+                {petInfo.name}.
               </p>
             </div>
             <Scanner onImageCapture={handleImageCapture} />
