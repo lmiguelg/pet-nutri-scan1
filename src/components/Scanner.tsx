@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Camera, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -10,7 +10,7 @@ interface ScannerProps {
 export const Scanner = ({ onImageCapture }: ScannerProps) => {
   const [isCapturing, setIsCapturing] = useState(false);
   const { toast } = useToast();
-  const fileInputRef = useState<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
