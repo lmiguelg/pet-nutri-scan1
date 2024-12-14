@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import type { PetInfo } from "@/types/pet";
 
 interface PhysicalDetailsStepProps {
-  petInfo: PetInfo;
-  updatePetInfo: (updates: Partial<PetInfo>) => void;
+  petInfo: Omit<PetInfo, 'id'>;
+  updatePetInfo: (updates: Partial<Omit<PetInfo, 'id'>>) => void;
 }
 
 export const PhysicalDetailsStep = ({ petInfo, updatePetInfo }: PhysicalDetailsStepProps) => {

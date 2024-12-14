@@ -7,8 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import type { PetInfo, Breed, PetType } from "@/types/pet";
 
 interface BasicInfoStepProps {
-  petInfo: PetInfo;
-  updatePetInfo: (updates: Partial<PetInfo>) => void;
+  petInfo: Omit<PetInfo, 'id'>;
+  updatePetInfo: (updates: Partial<Omit<PetInfo, 'id'>>) => void;
 }
 
 export const BasicInfoStep = ({ petInfo, updatePetInfo }: BasicInfoStepProps) => {
