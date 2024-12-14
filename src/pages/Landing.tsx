@@ -22,11 +22,6 @@ export const Landing = () => {
       {/* Hero Section */}
       <div className="container mx-auto px-6 py-16">
         <div className="grid gap-16 md:grid-cols-2 items-center">
-          <img
-            src="https://images.unsplash.com/photo-1581171383994-afd540b6a4da?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Dog eating from a bowl"
-            className="rounded-2xl shadow-xl w-full h-auto object-cover"
-          />
           {/* Left Column - Content */}
           <div className="space-y-10">
             <div className="space-y-6">
@@ -60,6 +55,12 @@ export const Landing = () => {
               </Alert>
             </div>
           </div>
+
+          <img
+            src="https://images.unsplash.com/photo-1581171383994-afd540b6a4da?q=80&w=1972&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Dog eating from a bowl"
+            className="rounded-2xl shadow-xl w-full h-auto object-cover"
+          />
 
           {/* Right Column - Feature Cards */}
           <div className="grid grid-cols-1 gap-8">
