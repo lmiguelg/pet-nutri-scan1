@@ -27,14 +27,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a pet nutritionist expert. Analyze the nutritional information from pet food labels and provide recommendations based on the pet's profile."
+            content: "You are a pet nutritionist expert. Analyze the nutritional information from pet food labels and provide recommendations based on the pet's profile. Return your analysis in a specific JSON format with two main sections: 'concerns' (a list of ingredient concerns and warnings) and 'recommendations' (a list of specific recommendations)."
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Please analyze this pet food label for a ${petInfo.age} year old ${petInfo.petType} named ${petInfo.name}. They weigh ${petInfo.weight} pounds.${petInfo.allergies?.length ? ` They have allergies to: ${petInfo.allergies.join(', ')}.` : ''} ${petInfo.healthIssues?.length ? ` They have the following health issues: ${petInfo.healthIssues.join(', ')}.` : ''} Please provide a detailed analysis of whether this food is suitable for them, including any concerns or recommendations.`
+                text: `Please analyze this pet food label for a ${petInfo.age} year old ${petInfo.petType} named ${petInfo.name}. They weigh ${petInfo.weight} pounds.${petInfo.allergies?.length ? ` They have allergies to: ${petInfo.allergies.join(', ')}.` : ''} ${petInfo.healthIssues?.length ? ` They have the following health issues: ${petInfo.healthIssues.join(', ')}.` : ''} Format your response as JSON with 'concerns' and 'recommendations' arrays.`
               },
               {
                 type: "image_url",
@@ -45,6 +45,7 @@ serve(async (req) => {
             ]
           }
         ],
+        response_format: { type: "json_object" },
         max_tokens: 1000
       }),
     });

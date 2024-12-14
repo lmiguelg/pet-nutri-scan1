@@ -1,79 +1,68 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { AlertTriangle, CheckCircle } from "lucide-react";
 
 interface AnalysisResultProps {
   analysis: string;
 }
 
+interface AnalysisData {
+  concerns: string[];
+  recommendations: string[];
+}
+
 export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
-  // Split the analysis into sections based on common patterns
-  const sections = analysis.split(/(?=Ingredients:|Nutritional Analysis:|Recommendation:|Safety Concerns:|Suitability:)/).filter(Boolean);
-
-  const getIcon = (sectionTitle: string) => {
-    switch (true) {
-      case sectionTitle.includes("Safety Concerns"):
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
-      case sectionTitle.includes("Suitability"):
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      default:
-        return <Info className="h-5 w-5 text-primary" />;
-    }
-  };
-
-  const getSectionColor = (sectionTitle: string) => {
-    switch (true) {
-      case sectionTitle.includes("Safety Concerns"):
-        return "bg-yellow-50 border-yellow-200";
-      case sectionTitle.includes("Suitability"):
-        return "bg-green-50 border-green-200";
-      default:
-        return "bg-blue-50 border-primary-200";
-    }
-  };
+  let analysisData: AnalysisData;
+  
+  try {
+    // Parse the JSON string from the content field
+    const parsed = JSON.parse(analysis);
+    analysisData = JSON.parse(parsed.choices[0].message.content);
+  } catch (error) {
+    console.error('Error parsing analysis:', error);
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <p className="text-red-500">Error parsing analysis data</p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Info className="h-5 w-5 text-primary" />
-          Nutritional Analysis
-        </CardTitle>
+        <CardTitle className="text-xl font-bold">Analysis Results</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {sections.map((section, index) => {
-          const [title, ...content] = section.split("\n").filter(Boolean);
-          return (
-            <div
-              key={index}
-              className={`p-4 rounded-lg border ${getSectionColor(title)} space-y-2`}
-            >
-              <div className="flex items-center gap-2">
-                {getIcon(title)}
-                <h3 className="font-semibold text-gray-900">
-                  {title.replace(":", "")}
-                </h3>
-              </div>
-              <div className="text-gray-700 space-y-2">
-                {content.map((line, i) => {
-                  // Check if the line contains percentages or key nutrients
-                  const isHighlight = /\d+%|protein|fat|fiber|calcium|vitamin/i.test(line);
-                  return isHighlight ? (
-                    <Badge
-                      key={i}
-                      variant="secondary"
-                      className="mr-2 mb-2"
-                    >
-                      {line.trim()}
-                    </Badge>
-                  ) : (
-                    <p key={i}>{line.trim()}</p>
-                  );
-                })}
-              </div>
-            </div>
-          );
-        })}
+      <CardContent className="space-y-6">
+        {/* Concerns Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+            <h3 className="font-semibold text-lg">Ingredient Concerns & Warnings</h3>
+          </div>
+          <ul className="list-disc pl-6 space-y-2">
+            {analysisData.concerns.map((concern, index) => (
+              <li key={index} className="text-gray-700">
+                {concern}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Recommendations Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-500" />
+            <h3 className="font-semibold text-lg">Recommendations</h3>
+          </div>
+          <ul className="list-disc pl-6 space-y-2">
+            {analysisData.recommendations.map((recommendation, index) => (
+              <li key={index} className="text-gray-700">
+                {recommendation}
+              </li>
+            ))}
+          </ul>
+        </div>
       </CardContent>
     </Card>
   );
