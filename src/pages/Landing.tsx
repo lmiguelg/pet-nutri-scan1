@@ -63,9 +63,9 @@ export const Landing = () => {
           <div className="relative hidden md:block">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80"
-                alt="Happy dog"
-                className="rounded-2xl shadow-xl"
+                src="https://images.unsplash.com/photo-1581888227599-779811939961?auto=format&fit=crop&w=800&q=80"
+                alt="Cat and dog together"
+                className="rounded-2xl shadow-xl object-cover h-[600px] w-full"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary-100/50 to-transparent rounded-2xl" />
             </div>
