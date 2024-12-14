@@ -17,6 +17,11 @@ export const PetFoodAnalyzer = ({ selectedPet }: PetFoodAnalyzerProps) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
 
+  // Clear analysis when selected pet changes
+  useState(() => {
+    setAnalysis(null);
+  }, [selectedPet.id]);
+
   const handleImageCapture = async (image: File) => {
     try {
       setIsAnalyzing(true);
