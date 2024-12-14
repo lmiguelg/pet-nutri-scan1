@@ -2,8 +2,10 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -37,6 +39,14 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary-600 to-primary-800 p-4">
       <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-primary-200/20">
+        <div className="mb-6">
+          <Link to="/">
+            <Button variant="ghost" size="sm" className="text-primary-100 hover:text-white">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Button>
+          </Link>
+        </div>
         <h1 className="text-3xl font-bold text-center mb-8 text-primary-800">Welcome to PetNutriScan</h1>
         <Auth
           supabaseClient={supabase}
