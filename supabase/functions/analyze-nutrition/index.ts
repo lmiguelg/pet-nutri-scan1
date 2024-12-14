@@ -27,14 +27,14 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a pet nutritionist expert. Analyze the nutritional information from pet food labels and provide recommendations based on the pet's profile. Return your analysis in a specific JSON format with two main sections: 'concerns' (a list of ingredient concerns and warnings) and 'recommendations' (a list of specific recommendations)."
+            content: "You are a pet nutritionist expert. Analyze the nutritional information from pet food labels and provide recommendations based on the pet's profile. Your response must be a valid JSON object with exactly two arrays: 'concerns' (list of ingredient concerns and warnings) and 'recommendations' (list of specific recommendations)."
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Please analyze this pet food label for a ${petInfo.age} year old ${petInfo.petType} named ${petInfo.name}. They weigh ${petInfo.weight} pounds.${petInfo.allergies?.length ? ` They have allergies to: ${petInfo.allergies.join(', ')}.` : ''} ${petInfo.healthIssues?.length ? ` They have the following health issues: ${petInfo.healthIssues.join(', ')}.` : ''} Format your response as JSON with 'concerns' and 'recommendations' arrays.`
+                text: `Please analyze this pet food label for a ${petInfo.age} year old ${petInfo.petType} named ${petInfo.name}. They weigh ${petInfo.weight} pounds.${petInfo.allergies?.length ? ` They have allergies to: ${petInfo.allergies.join(', ')}.` : ''} ${petInfo.healthIssues?.length ? ` They have the following health issues: ${petInfo.healthIssues.join(', ')}.` : ''}`
               },
               {
                 type: "image_url",
@@ -57,9 +57,13 @@ serve(async (req) => {
     }
 
     const data = await openAIResponse.json();
-    console.log('Analysis completed successfully');
+    console.log('Raw OpenAI response:', data);
+    
+    // Parse the content as JSON
+    const analysisData = JSON.parse(data.choices[0].message.content);
+    console.log('Parsed analysis data:', analysisData);
 
-    return new Response(JSON.stringify(data), {
+    return new Response(JSON.stringify(analysisData), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {

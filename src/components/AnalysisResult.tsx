@@ -14,9 +14,13 @@ export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
   let analysisData: AnalysisData;
   
   try {
-    // Parse the JSON string from the content field
-    const parsed = JSON.parse(analysis);
-    analysisData = JSON.parse(parsed.choices[0].message.content);
+    // The analysis should already be a JSON object
+    analysisData = typeof analysis === 'string' ? JSON.parse(analysis) : analysis;
+
+    // Validate the structure
+    if (!Array.isArray(analysisData.concerns) || !Array.isArray(analysisData.recommendations)) {
+      throw new Error('Invalid analysis data structure');
+    }
   } catch (error) {
     console.error('Error parsing analysis:', error);
     return (
