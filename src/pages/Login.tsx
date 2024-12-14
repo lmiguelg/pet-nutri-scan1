@@ -13,7 +13,7 @@ const Login = () => {
     // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/");
+        navigate("/dashboard");
       }
     });
 
@@ -23,7 +23,7 @@ const Login = () => {
           title: "Welcome back!",
           description: "You have successfully signed in.",
         });
-        navigate("/");
+        navigate("/dashboard");
       } else if (event === "SIGNED_OUT") {
         navigate("/login");
       } else if (event === "USER_UPDATED") {
