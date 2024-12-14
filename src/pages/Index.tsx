@@ -8,9 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { PetSelector } from "@/components/PetSelector";
+import { AnalysisResult } from "@/components/AnalysisResult";
 
 const Index = () => {
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
@@ -230,18 +231,7 @@ const Index = () => {
                 </CardContent>
               </Card>
             )}
-            {analysis && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Nutritional Analysis</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="whitespace-pre-wrap text-left">
-                    {analysis}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            {analysis && <AnalysisResult analysis={analysis} />}
           </motion.div>
         )}
       </div>
