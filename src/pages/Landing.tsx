@@ -110,16 +110,18 @@ export const Landing = () => {
         </div>
       </div>
 
-      {/* Medical Disclaimer */}
-      <div className="container mx-auto px-4 py-8">
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Medical Disclaimer</AlertTitle>
-          <AlertDescription>
+      {/* Medical Disclaimer - Updated to be smaller and less prominent */}
+      <div className="container mx-auto px-4 py-4">
+        <div className="text-sm text-gray-600 bg-white/50 p-4 rounded-lg">
+          <div className="flex items-center gap-2 text-gray-700">
+            <AlertCircle className="h-3 w-3" />
+            <span className="font-medium">Medical Disclaimer</span>
+          </div>
+          <p className="mt-1 text-xs">
             This tool is for informational purposes only. Always consult with your veterinarian
             about your pet's specific dietary needs and before making any changes to their diet.
-          </AlertDescription>
-        </Alert>
+          </p>
+        </div>
       </div>
     </div>
   );
