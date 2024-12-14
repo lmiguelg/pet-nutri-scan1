@@ -3,6 +3,7 @@ import { Scanner } from "./Scanner";
 import { AnalysisResult } from "./AnalysisResult";
 import { AnalysisHistory } from "./AnalysisHistory";
 import { LoadingCard } from "./LoadingCard";
+import { FullScreenLoading } from "./FullScreenLoading";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { PetInfo } from "@/types/pet";
@@ -43,15 +44,14 @@ export const PetFoodAnalyzer = ({ selectedPet }: PetFoodAnalyzerProps) => {
         }
 
         const data = await response.json();
-        const analysisText = data.choices[0].message.content;
-        setAnalysis(analysisText);
+        setAnalysis(data);
 
         // Store the analysis in the database
         const { error: dbError } = await supabase
           .from('pet_food_analyses')
           .insert({
             pet_id: selectedPet.id,
-            analysis_text: analysisText,
+            analysis_text: data,
             image_data: base64Image,
           });
 
@@ -82,13 +82,15 @@ export const PetFoodAnalyzer = ({ selectedPet }: PetFoodAnalyzerProps) => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div className="space-y-6">
-        <Scanner onImageCapture={handleImageCapture} />
-        {isAnalyzing && <LoadingCard />}
-        {analysis && <AnalysisResult analysis={analysis} />}
+    <>
+      {isAnalyzing && <FullScreenLoading />}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          <Scanner onImageCapture={handleImageCapture} />
+          {analysis && <AnalysisResult analysis={analysis} />}
+        </div>
+        <AnalysisHistory petId={selectedPet.id} />
       </div>
-      <AnalysisHistory petId={selectedPet.id} />
-    </div>
+    </>
   );
 };
