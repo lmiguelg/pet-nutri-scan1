@@ -132,7 +132,7 @@ const Index = () => {
       <div className="max-w-3xl mx-auto relative">
         <Button
           variant="outline"
-          className="absolute right-0 top-0 bg-white/90 hover:bg-white/75 text-primary-700 border-primary-200 hover:border-primary-300 shadow-sm transition-all duration-200 font-medium"
+          className="absolute right-4 top-4 bg-white/90 hover:bg-white/75 text-primary-700 border-primary-200 hover:border-primary-300 shadow-sm transition-all duration-200 font-medium"
           onClick={handleLogout}
         >
           <LogOut className="mr-2 h-4 w-4" />
