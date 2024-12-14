@@ -8,12 +8,12 @@ import { HealthInfoStep } from "./onboarding/HealthInfoStep";
 import type { PetInfo } from "@/types/pet";
 
 interface OnboardingFormProps {
-  onComplete: (petInfo: PetInfo) => void;
+  onComplete: (petInfo: Omit<PetInfo, 'id'>) => void;
 }
 
 export const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
   const [step, setStep] = useState(1);
-  const [petInfo, setPetInfo] = useState<PetInfo>({
+  const [petInfo, setPetInfo] = useState<Omit<PetInfo, 'id'>>({
     name: "",
     petType: "dog",
     breedId: null,
@@ -25,7 +25,7 @@ export const OnboardingForm = ({ onComplete }: OnboardingFormProps) => {
   });
   const { toast } = useToast();
 
-  const updatePetInfo = (updates: Partial<PetInfo>) => {
+  const updatePetInfo = (updates: Partial<Omit<PetInfo, 'id'>>) => {
     setPetInfo((current) => ({ ...current, ...updates }));
   };
 

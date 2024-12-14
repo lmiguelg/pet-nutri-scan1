@@ -14,12 +14,7 @@ serve(async (req) => {
 
   try {
     const { image, petInfo } = await req.json();
-
-    // Remove the data:image/jpeg;base64, prefix if it exists
-    const base64Image = image.split(',')[1] || image;
-
-    console.log('Processing request for pet:', petInfo.name);
-    console.log('Image data length:', base64Image.length);
+    console.log('Analyzing image for pet:', petInfo.name);
 
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -28,7 +23,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: "gpt-4-vision-preview",
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -39,12 +34,12 @@ serve(async (req) => {
             content: [
               {
                 type: "text",
-                text: `Please analyze this pet food label for a ${petInfo.age} year old ${petInfo.petType} named ${petInfo.name}. They weigh ${petInfo.weight} pounds.${petInfo.allergies.length ? ` They have allergies to: ${petInfo.allergies.join(', ')}.` : ''} ${petInfo.healthIssues.length ? ` They have the following health issues: ${petInfo.healthIssues.join(', ')}.` : ''} Please provide a detailed analysis of whether this food is suitable for them, including any concerns or recommendations.`
+                text: `Please analyze this pet food label for a ${petInfo.age} year old ${petInfo.petType} named ${petInfo.name}. They weigh ${petInfo.weight} pounds.${petInfo.allergies?.length ? ` They have allergies to: ${petInfo.allergies.join(', ')}.` : ''} ${petInfo.healthIssues?.length ? ` They have the following health issues: ${petInfo.healthIssues.join(', ')}.` : ''} Please provide a detailed analysis of whether this food is suitable for them, including any concerns or recommendations.`
               },
               {
                 type: "image_url",
                 image_url: {
-                  url: `data:image/jpeg;base64,${base64Image}`
+                  url: image
                 }
               }
             ]
@@ -61,22 +56,19 @@ serve(async (req) => {
     }
 
     const data = await openAIResponse.json();
-    console.log('OpenAI Response received');
+    console.log('Analysis completed successfully');
 
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error in analyze-nutrition function:', error);
-    return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        details: error.toString()
-      }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      details: error.toString()
+    }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });
