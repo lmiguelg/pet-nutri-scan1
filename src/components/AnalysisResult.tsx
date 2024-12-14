@@ -49,7 +49,7 @@ export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
           </div>
           <div className="flex items-center gap-2">
             <span className="text-3xl font-bold text-primary-700">{analysisData.score}</span>
-            <span className="text-gray-600">/100</span>
+            <span className="text-gray-600">/10</span>
           </div>
         </div>
 

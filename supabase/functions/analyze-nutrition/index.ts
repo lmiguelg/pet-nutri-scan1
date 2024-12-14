@@ -27,7 +27,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a pet nutritionist expert. Analyze the nutritional information from pet food labels and provide recommendations based on the pet's profile. Your response must be a valid JSON object with exactly three fields: 'concerns' (list of ingredient concerns and warnings), 'recommendations' (list of specific recommendations), and 'score' (integer from 0 to 100 representing the overall quality and suitability of the food for this specific pet, where 100 is perfect)."
+            content: "You are a pet nutritionist expert. Analyze the nutritional information from pet food labels and provide recommendations based on the pet's profile. Your response must be a valid JSON object with exactly three fields: 'concerns' (list of ingredient concerns and warnings), 'recommendations' (list of specific recommendations), and 'score' (integer from 1 to 10 representing the overall quality and suitability of the food for this specific pet, where 10 is perfect)."
           },
           {
             role: "user",
