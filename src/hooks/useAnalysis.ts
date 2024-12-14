@@ -76,6 +76,7 @@ export const useAnalysis = (selectedPet: PetInfo) => {
 
   return {
     analysis,
+    setAnalysis,
     isAnalyzing,
     analyzeImage,
   };

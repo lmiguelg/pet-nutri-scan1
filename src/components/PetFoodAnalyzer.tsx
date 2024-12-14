@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { AnalysisSection } from "./AnalysisSection";
 import { AnalysisHistory } from "./AnalysisHistory";
 import { FullScreenLoading } from "./FullScreenLoading";
@@ -10,12 +9,14 @@ interface PetFoodAnalyzerProps {
 }
 
 export const PetFoodAnalyzer = ({ selectedPet }: PetFoodAnalyzerProps) => {
-  const { analysis, isAnalyzing, analyzeImage } = useAnalysis(selectedPet);
+  const { analysis, setAnalysis, isAnalyzing, analyzeImage } = useAnalysis(selectedPet);
 
   // Clear analysis when selected pet changes
   useEffect(() => {
-    setAnalysis(null);
-  }, [selectedPet.id]);
+    if (setAnalysis) {
+      setAnalysis(null);
+    }
+  }, [selectedPet.id, setAnalysis]);
 
   return (
     <>
