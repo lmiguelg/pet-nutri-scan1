@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Scanner } from "./Scanner";
 import { AnalysisResult } from "./AnalysisResult";
 import { AnalysisHistory } from "./AnalysisHistory";
@@ -18,7 +18,7 @@ export const PetFoodAnalyzer = ({ selectedPet }: PetFoodAnalyzerProps) => {
   const { toast } = useToast();
 
   // Clear analysis when selected pet changes
-  useState(() => {
+  useEffect(() => {
     setAnalysis(null);
   }, [selectedPet.id]);
 
