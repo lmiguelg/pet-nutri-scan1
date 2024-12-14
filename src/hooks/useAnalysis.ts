@@ -47,6 +47,7 @@ export const useAnalysis = (selectedPet: PetInfo) => {
           pet_id: selectedPet.id,
           analysis_text: data,
           image_data: base64Image,
+          score: data.score,
         });
 
       if (dbError) {

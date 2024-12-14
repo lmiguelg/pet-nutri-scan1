@@ -34,6 +34,7 @@ export type Database = {
           id: string
           image_data: string
           pet_id: string
+          score: number
         }
         Insert: {
           analysis_text: string
@@ -41,6 +42,7 @@ export type Database = {
           id?: string
           image_data: string
           pet_id: string
+          score: number
         }
         Update: {
           analysis_text?: string
@@ -48,6 +50,7 @@ export type Database = {
           id?: string
           image_data?: string
           pet_id?: string
+          score?: number
         }
         Relationships: [
           {

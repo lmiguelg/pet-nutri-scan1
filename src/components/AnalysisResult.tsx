@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertTriangle, CheckCircle } from "lucide-react";
+import { AlertTriangle, CheckCircle, Star } from "lucide-react";
 
 interface AnalysisResultProps {
   analysis: string;
@@ -8,6 +8,7 @@ interface AnalysisResultProps {
 interface AnalysisData {
   concerns: string[];
   recommendations: string[];
+  score: number;
 }
 
 export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
@@ -18,7 +19,9 @@ export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
     analysisData = typeof analysis === 'string' ? JSON.parse(analysis) : analysis;
 
     // Validate the structure
-    if (!Array.isArray(analysisData.concerns) || !Array.isArray(analysisData.recommendations)) {
+    if (!Array.isArray(analysisData.concerns) || 
+        !Array.isArray(analysisData.recommendations) || 
+        typeof analysisData.score !== 'number') {
       throw new Error('Invalid analysis data structure');
     }
   } catch (error) {
@@ -38,6 +41,18 @@ export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
         <CardTitle className="text-xl font-bold">Analysis Results</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Score Section */}
+        <div className="bg-primary-50 p-4 rounded-lg">
+          <div className="flex items-center gap-2 mb-2">
+            <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
+            <h3 className="font-semibold text-lg">Nutrition Score</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-3xl font-bold text-primary-700">{analysisData.score}</span>
+            <span className="text-gray-600">/100</span>
+          </div>
+        </div>
+
         {/* Concerns Section */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
