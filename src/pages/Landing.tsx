@@ -47,12 +47,12 @@ export const Landing = () => {
               </Button>
             </div>
 
-            {/* Alerts Section */}
+            {/* Updated Safety Notice */}
             <div className="space-y-4">
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Important Safety Notice</AlertTitle>
-                <AlertDescription>
+              <Alert className="bg-primary-50 border-primary-200">
+                <AlertCircle className="h-4 w-4 text-primary-600" />
+                <AlertTitle className="text-primary-800">Important Safety Notice</AlertTitle>
+                <AlertDescription className="text-primary-700">
                   Incorrect pet food can lead to serious health issues. Always verify ingredients carefully.
                 </AlertDescription>
               </Alert>
@@ -108,19 +108,19 @@ export const Landing = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Medical Disclaimer - Updated to be smaller and less prominent */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="text-sm text-gray-600 bg-white/50 p-4 rounded-lg">
-          <div className="flex items-center gap-2 text-gray-700">
-            <AlertCircle className="h-3 w-3" />
-            <span className="font-medium">Medical Disclaimer</span>
+        {/* Medical Disclaimer */}
+        <div className="container mx-auto px-4 py-4">
+          <div className="text-sm text-gray-600 bg-white/50 p-4 rounded-lg">
+            <div className="flex items-center gap-2 text-gray-700">
+              <AlertCircle className="h-3 w-3" />
+              <span className="font-medium">Medical Disclaimer</span>
+            </div>
+            <p className="mt-1 text-xs">
+              This tool is for informational purposes only. Always consult with your veterinarian
+              about your pet's specific dietary needs and before making any changes to their diet.
+            </p>
           </div>
-          <p className="mt-1 text-xs">
-            This tool is for informational purposes only. Always consult with your veterinarian
-            about your pet's specific dietary needs and before making any changes to their diet.
-          </p>
         </div>
       </div>
     </div>
