@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { PetSelector } from "@/components/PetSelector";
 import { AnalysisResult } from "@/components/AnalysisResult";
+import { AnalysisHistory } from "@/components/AnalysisHistory";
 
 const Index = () => {
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
@@ -142,7 +143,26 @@ const Index = () => {
         }
 
         const data = await response.json();
-        setAnalysis(data.choices[0].message.content);
+        const analysisText = data.choices[0].message.content;
+        setAnalysis(analysisText);
+
+        // Store the analysis in the database
+        const { error: dbError } = await supabase
+          .from('pet_food_analyses')
+          .insert({
+            pet_id: selectedPet.id,
+            analysis_text: analysisText,
+            image_data: base64Image,
+          });
+
+        if (dbError) {
+          console.error('Error saving analysis:', dbError);
+          toast({
+            title: "Warning",
+            description: "Analysis completed but couldn't save to history",
+            variant: "destructive",
+          });
+        }
         
         toast({
           title: "Analysis Complete",
@@ -188,7 +208,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-100 to-primary-200 py-8 px-4">
-      <div className="max-w-md mx-auto relative">
+      <div className="max-w-3xl mx-auto relative">
         <Button
           variant="outline"
           className="absolute right-0 top-0"
@@ -220,18 +240,25 @@ const Index = () => {
                 </p>
               )}
             </div>
-            {selectedPet && <Scanner onImageCapture={handleImageCapture} />}
-            {isAnalyzing && (
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                    <span className="ml-3">Analyzing nutritional information...</span>
-                  </div>
-                </CardContent>
-              </Card>
+            {selectedPet && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-6">
+                  <Scanner onImageCapture={handleImageCapture} />
+                  {isAnalyzing && (
+                    <Card>
+                      <CardContent className="pt-6">
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                          <span className="ml-3">Analyzing nutritional information...</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+                  {analysis && <AnalysisResult analysis={analysis} />}
+                </div>
+                <AnalysisHistory petId={selectedPet.id} />
+              </div>
             )}
-            {analysis && <AnalysisResult analysis={analysis} />}
           </motion.div>
         )}
       </div>

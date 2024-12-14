@@ -27,6 +27,38 @@ export type Database = {
         }
         Relationships: []
       }
+      pet_food_analyses: {
+        Row: {
+          analysis_text: string
+          created_at: string
+          id: string
+          image_data: string
+          pet_id: string
+        }
+        Insert: {
+          analysis_text: string
+          created_at?: string
+          id?: string
+          image_data: string
+          pet_id: string
+        }
+        Update: {
+          analysis_text?: string
+          created_at?: string
+          id?: string
+          image_data?: string
+          pet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_food_analyses_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pets: {
         Row: {
           age: number
