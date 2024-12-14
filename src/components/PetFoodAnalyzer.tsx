@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { AnalysisSection } from "./AnalysisSection";
 import { AnalysisHistory } from "./AnalysisHistory";
 import { FullScreenLoading } from "./FullScreenLoading";
