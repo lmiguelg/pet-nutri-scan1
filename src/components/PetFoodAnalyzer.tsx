@@ -23,57 +23,60 @@ export const PetFoodAnalyzer = ({ selectedPet }: PetFoodAnalyzerProps) => {
   }, [selectedPet.id]);
 
   const handleImageCapture = async (image: File) => {
+    setIsAnalyzing(true); // Set loading state before any async operations
+    setAnalysis(null);
+
     try {
-      setIsAnalyzing(true);
-      setAnalysis(null);
-
       const reader = new FileReader();
-      reader.readAsDataURL(image);
       
-      reader.onload = async () => {
-        const base64Image = reader.result as string;
-        
-        const response = await fetch('https://ktxnppezwuiulgmbmeip.functions.supabase.co/analyze-nutrition', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            image: base64Image,
-            petInfo: selectedPet,
-          }),
+      const readerPromise = new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(image);
+      });
+
+      const base64Image = await readerPromise as string;
+      
+      const response = await fetch('https://ktxnppezwuiulgmbmeip.functions.supabase.co/analyze-nutrition', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: base64Image,
+          petInfo: selectedPet,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze image');
+      }
+
+      const data = await response.json();
+      setAnalysis(data);
+
+      // Store the analysis in the database
+      const { error: dbError } = await supabase
+        .from('pet_food_analyses')
+        .insert({
+          pet_id: selectedPet.id,
+          analysis_text: data,
+          image_data: base64Image,
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to analyze image');
-        }
-
-        const data = await response.json();
-        setAnalysis(data);
-
-        // Store the analysis in the database
-        const { error: dbError } = await supabase
-          .from('pet_food_analyses')
-          .insert({
-            pet_id: selectedPet.id,
-            analysis_text: data,
-            image_data: base64Image,
-          });
-
-        if (dbError) {
-          console.error('Error saving analysis:', dbError);
-          toast({
-            title: "Warning",
-            description: "Analysis completed but couldn't save to history",
-            variant: "destructive",
-          });
-        }
-        
+      if (dbError) {
+        console.error('Error saving analysis:', dbError);
         toast({
-          title: "Analysis Complete",
-          description: "The nutritional information has been analyzed!",
+          title: "Warning",
+          description: "Analysis completed but couldn't save to history",
+          variant: "destructive",
         });
-      };
+      }
+      
+      toast({
+        title: "Analysis Complete",
+        description: "The nutritional information has been analyzed!",
+      });
     } catch (error) {
       console.error('Error analyzing image:', error);
       toast({
