@@ -38,13 +38,10 @@ export const Landing = () => {
             <div className="flex gap-4">
               <Link to="/login">
                 <Button size="lg" className="bg-primary hover:bg-primary-600">
-                  Our Services
+                  Scan Pet Food
                   <ArrowRight className="ml-2" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg">
-                Schedule a scan
-              </Button>
             </div>
 
             {/* Updated Safety Notice */}
