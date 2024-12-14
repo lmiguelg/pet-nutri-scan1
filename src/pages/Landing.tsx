@@ -1,6 +1,6 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, ArrowRight, BowlFood, PawPrint } from "lucide-react";
+import { AlertCircle, ArrowRight, Bowl, PawPrint } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const Landing = () => {
@@ -24,7 +24,7 @@ export const Landing = () => {
             <div className="space-y-4">
               <Link to="/login">
                 <Button size="lg" className="w-full md:w-auto">
-                  <BowlFood className="mr-2" />
+                  <Bowl className="mr-2" />
                   Analyze Pet Food Now
                   <ArrowRight className="ml-2" />
                 </Button>
