@@ -63,7 +63,7 @@ export const Landing = () => {
           <div className="relative hidden md:block">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1581888227599-779811939961?auto=format&fit=crop&w=800&q=80"
+                src="https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=800&q=80"
                 alt="Cat and dog together"
                 className="rounded-2xl shadow-xl object-cover h-[600px] w-full"
               />
