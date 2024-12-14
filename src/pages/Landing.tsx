@@ -61,40 +61,40 @@ export const Landing = () => {
             alt="Dog eating from a bowl"
             className="rounded-2xl shadow-xl w-full h-auto object-cover"
           />
+        </div>
 
-          {/* Right Column - Feature Cards */}
-          <div className="grid grid-cols-1 gap-8">
-            <div className="bg-gray-900 text-white p-10 rounded-2xl">
-              <div className="space-y-6">
-                <PawPrint className="h-10 w-10" />
-                <h3 className="text-2xl font-semibold">Nutrition Analysis</h3>
-                <p className="text-gray-300">Let us know what we can do for your pet's diet</p>
-                <Link to="/login" className="text-primary-300 hover:text-primary-200 inline-flex items-center">
-                  Learn more <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
+        {/* Feature Cards - Updated to display side by side */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-gray-900 text-white p-10 rounded-2xl">
+            <div className="space-y-6">
+              <PawPrint className="h-10 w-10" />
+              <h3 className="text-2xl font-semibold">Nutrition Analysis</h3>
+              <p className="text-gray-300">Let us know what we can do for your pet's diet</p>
+              <Link to="/login" className="text-primary-300 hover:text-primary-200 inline-flex items-center">
+                Learn more <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
+          </div>
 
-            <div className="bg-primary-600 text-white p-10 rounded-2xl">
-              <div className="space-y-6">
-                <Heart className="h-10 w-10" />
-                <h3 className="text-2xl font-semibold">Feed with love</h3>
-                <p className="text-primary-100">Feed your pet with love and ensure their health with proper nutrition</p>
-                <Link to="/login" className="text-primary-200 hover:text-primary-100 inline-flex items-center">
-                  Learn more <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </div>
+          <div className="bg-primary-600 text-white p-10 rounded-2xl">
+            <div className="space-y-6">
+              <Heart className="h-10 w-10" />
+              <h3 className="text-2xl font-semibold">Feed with love</h3>
+              <p className="text-primary-100">Feed your pet with love and ensure their health with proper nutrition</p>
+              <Link to="/login" className="text-primary-200 hover:text-primary-100 inline-flex items-center">
+                Learn more <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </div>
+          </div>
 
-            <div className="bg-gray-900 text-white p-10 rounded-2xl">
-              <div className="space-y-6">
-                <BookOpen className="h-10 w-10" />
-                <h3 className="text-2xl font-semibold">Pet stories</h3>
-                <p className="text-gray-300">Read success stories from our happy pet parents</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold">55+</span>
-                  <span className="text-gray-400">stories</span>
-                </div>
+          <div className="bg-gray-900 text-white p-10 rounded-2xl">
+            <div className="space-y-6">
+              <BookOpen className="h-10 w-10" />
+              <h3 className="text-2xl font-semibold">Pet stories</h3>
+              <p className="text-gray-300">Read success stories from our happy pet parents</p>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl font-bold">55+</span>
+                <span className="text-gray-400">stories</span>
               </div>
             </div>
           </div>
