@@ -41,7 +41,7 @@ const Login = () => {
       <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-xl shadow-xl p-8 border border-primary-200/20">
         <div className="mb-6">
           <Link to="/">
-            <Button variant="ghost" size="sm" className="text-primary-100 hover:text-white">
+            <Button variant="ghost" size="sm" className="bg-white/10 text-white hover:bg-white/20">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Home
             </Button>
