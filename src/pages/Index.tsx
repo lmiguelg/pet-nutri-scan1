@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { OnboardingForm } from "@/components/OnboardingForm";
-import { Scanner } from "@/components/Scanner";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import type { PetInfo } from "@/types/pet";
@@ -8,16 +7,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { PetSelector } from "@/components/PetSelector";
-import { AnalysisResult } from "@/components/AnalysisResult";
-import { AnalysisHistory } from "@/components/AnalysisHistory";
+import { PetFoodAnalyzer } from "@/components/PetFoodAnalyzer";
 
 const Index = () => {
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState<string | null>(null);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -107,80 +102,6 @@ const Index = () => {
     }
   };
 
-  const handleImageCapture = async (image: File) => {
-    if (!selectedPet) {
-      toast({
-        title: "Error",
-        description: "Please select a pet before analyzing food",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      setIsAnalyzing(true);
-      setAnalysis(null);
-
-      const reader = new FileReader();
-      reader.readAsDataURL(image);
-      
-      reader.onload = async () => {
-        const base64Image = reader.result as string;
-        
-        const response = await fetch('https://ktxnppezwuiulgmbmeip.functions.supabase.co/analyze-nutrition', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            image: base64Image,
-            petInfo: selectedPet,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to analyze image');
-        }
-
-        const data = await response.json();
-        const analysisText = data.choices[0].message.content;
-        setAnalysis(analysisText);
-
-        // Store the analysis in the database
-        const { error: dbError } = await supabase
-          .from('pet_food_analyses')
-          .insert({
-            pet_id: selectedPet.id,
-            analysis_text: analysisText,
-            image_data: base64Image,
-          });
-
-        if (dbError) {
-          console.error('Error saving analysis:', dbError);
-          toast({
-            title: "Warning",
-            description: "Analysis completed but couldn't save to history",
-            variant: "destructive",
-          });
-        }
-        
-        toast({
-          title: "Analysis Complete",
-          description: "The nutritional information has been analyzed!",
-        });
-      };
-    } catch (error) {
-      console.error('Error analyzing image:', error);
-      toast({
-        title: "Error",
-        description: "Failed to analyze the image. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
-
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -240,25 +161,7 @@ const Index = () => {
                 </p>
               )}
             </div>
-            {selectedPet && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-6">
-                  <Scanner onImageCapture={handleImageCapture} />
-                  {isAnalyzing && (
-                    <Card>
-                      <CardContent className="pt-6">
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                          <span className="ml-3">Analyzing nutritional information...</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                  {analysis && <AnalysisResult analysis={analysis} />}
-                </div>
-                <AnalysisHistory petId={selectedPet.id} />
-              </div>
-            )}
+            {selectedPet && <PetFoodAnalyzer selectedPet={selectedPet} />}
           </motion.div>
         )}
       </div>
