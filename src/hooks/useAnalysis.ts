@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { PetInfo } from "@/types/pet";
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 export const useAnalysis = (selectedPet: PetInfo) => {
   const [analysis, setAnalysis] = useState<string | null>(null);
@@ -29,16 +30,31 @@ export const useAnalysis = (selectedPet: PetInfo) => {
   const { data: scanCount } = useQuery({
     queryKey: ['scan-count'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No user');
+
+      // First try to get existing record
       const { data, error } = await supabase
         .from('user_subscriptions')
         .select('free_scans_used')
+        .eq('user_id', user.id)
         .single();
       
-      if (error && error.code !== 'PGRST116') {
+      if (error && error.code === 'PGRST116') {
+        // No record exists, create one
+        const { data: newData, error: insertError } = await supabase
+          .from('user_subscriptions')
+          .insert({ user_id: user.id, free_scans_used: 0 })
+          .select('free_scans_used')
+          .single();
+        
+        if (insertError) throw insertError;
+        return newData.free_scans_used;
+      } else if (error) {
         throw error;
       }
       
-      return data?.free_scans_used || 0;
+      return data.free_scans_used;
     },
   });
 
@@ -75,7 +91,7 @@ export const useAnalysis = (selectedPet: PetInfo) => {
       toast({
         title: "Scan limit reached",
         description: "You've used all your free scans. Upgrade to continue analyzing pet food!",
-        action: () => startCheckout(),
+        action: <Button onClick={startCheckout}>Upgrade</Button>,
       });
       return;
     }
