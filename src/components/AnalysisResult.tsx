@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, CheckCircle, Star } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AnalysisResultProps {
   analysis: string;
@@ -10,6 +11,25 @@ interface AnalysisData {
   recommendations: string[];
   score: number;
 }
+
+const getScoreColor = (score: number) => {
+  // Bad scores (1-4) - red to yellow
+  if (score <= 4) {
+    return "bg-gradient-to-r from-[#ea384c] to-[#FEF7CD]";
+  }
+  // Medium scores (5-7) - yellow
+  if (score <= 7) {
+    return "bg-[#FEF7CD]";
+  }
+  // Good scores (8-10) - yellow to green
+  return "bg-gradient-to-r from-[#FEF7CD] to-[#F2FCE2]";
+};
+
+const getScoreTextColor = (score: number) => {
+  if (score <= 4) return "text-red-700";
+  if (score <= 7) return "text-yellow-700";
+  return "text-green-700";
+};
 
 export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
   let analysisData: AnalysisData;
@@ -42,13 +62,21 @@ export const AnalysisResult = ({ analysis }: AnalysisResultProps) => {
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Score Section */}
-        <div className="bg-primary-50 p-4 rounded-lg">
+        <div className={cn(
+          "p-4 rounded-lg transition-colors duration-300",
+          getScoreColor(analysisData.score)
+        )}>
           <div className="flex items-center gap-2 mb-2">
             <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
             <h3 className="font-semibold text-lg">Nutrition Score</h3>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-primary-700">{analysisData.score}</span>
+            <span className={cn(
+              "text-3xl font-bold transition-colors duration-300",
+              getScoreTextColor(analysisData.score)
+            )}>
+              {analysisData.score}
+            </span>
             <span className="text-gray-600">/10</span>
           </div>
         </div>
