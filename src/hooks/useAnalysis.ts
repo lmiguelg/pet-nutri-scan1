@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { PetInfo } from "@/types/pet";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
+import type { ToastActionElement } from "@/components/ui/toast";
 
 export const useAnalysis = (selectedPet: PetInfo) => {
   const [analysis, setAnalysis] = useState<string | null>(null);
@@ -91,7 +91,10 @@ export const useAnalysis = (selectedPet: PetInfo) => {
       toast({
         title: "Scan limit reached",
         description: "You've used all your free scans. Upgrade to continue analyzing pet food!",
-        action: <Button onClick={startCheckout}>Upgrade</Button>,
+        action: {
+          altText: "Upgrade to Premium",
+          onClick: startCheckout,
+        } as ToastActionElement,
       });
       return;
     }
