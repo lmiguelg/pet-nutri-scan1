@@ -75,14 +75,7 @@ export const useAnalysis = (selectedPet: PetInfo) => {
       toast({
         title: "Scan limit reached",
         description: "You've used all your free scans. Upgrade to continue analyzing pet food!",
-        action: (
-          <button
-            onClick={startCheckout}
-            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
-          >
-            Upgrade
-          </button>
-        ),
+        action: () => startCheckout(),
       });
       return;
     }
